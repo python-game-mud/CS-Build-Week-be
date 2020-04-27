@@ -65,3 +65,8 @@ def move(request):
 def say(request):
     # IMPLEMENT
     return JsonResponse({'error':"Not yet implemented"}, safe=True, status=500)
+
+
+def testing(req):
+  return JsonResponse({"something": "<html><body>content</body></html>"}, status=200, safe=True)
+
