@@ -12,8 +12,6 @@ class Room(models.Model):
     s_to = models.IntegerField(default=0)
     e_to = models.IntegerField(default=0)
     w_to = models.IntegerField(default=0)
-    coordsX = models.IntegerField(default=0)
-    coordsY = models.IntegerField(default=0)
 
     def connectRooms(self, destinationRoom, direction):
         destinationRoomID = destinationRoom.id
