@@ -7,6 +7,9 @@ from django.contrib.auth.models import User
 from .models import *
 from rest_framework.decorators import api_view
 import json
+# from django.core import serializers
+from rest_framework import serializers, viewsets
+
 
 # instantiate pusher
 # pusher = Pusher(app_id=config('PUSHER_APP_ID'), key=config('PUSHER_KEY'), secret=config('PUSHER_SECRET'), cluster=config('PUSHER_CLUSTER'))
@@ -26,6 +29,7 @@ def initialize(request):
 # @csrf_exempt
 @api_view(["POST"])
 def move(request):
+    print("REQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ",request)
     dirs={"n": "north", "s": "south", "e": "east", "w": "west"}
     reverse_dirs = {"n": "south", "s": "north", "e": "west", "w": "east"}
     player = request.user.player
@@ -66,7 +70,28 @@ def say(request):
     # IMPLEMENT
     return JsonResponse({'error':"Not yet implemented"}, safe=True, status=500)
 
+# @api_view(["GET"])
+# def all_rooms(req):
+#     rooms = serializers.serialize("json", Room.objects.all())
+#     return JsonResponse({'rooms': rooms},safe=True, status=200)
 
-def testing(req):
-  return JsonResponse({"something": "<html><body>content</body></html>"}, status=200, safe=True)
 
+
+class RoomsSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Room
+        fields = ("title", "description", "n_to", "s_to", "e_to", "w_to")
+
+class RoomViewSet(viewsets.ModelViewSet):
+    serializer_class = RoomsSerializer
+    queryset = Room.objects.none()
+
+    def get_queryset(self):
+        logged_in_user = self.request.user
+        if logged_in_user.is_anonymous:
+            return Room.objects.none()
+        else:
+            return Room.objects.all()
+
+            # Room.objects.filter(user=logged_in_user)

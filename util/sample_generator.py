@@ -150,6 +150,40 @@ class World:
         # Print string
         print(str)
 
+class RoomGenerator:
+    def __init__(self):
+        self.grid = None
+        self.width = 0
+        self.height = 0
+    def generate_rooms(self, size_x, size_y, num_rooms):
+        self.width = size_x
+        self.height = size_y
+        for i in range(len(self.grid)):
+            self.grid[i] = [None] * size_x
+        x = 0
+        y = 0
+        room_count = 0
+        # 1 = east -1 = west
+        direction = 1
+        previous_room = None
+        while room_count < num_rooms:
+            if direction > 0 and x < size_x - 1:
+                room_direction = "e"
+                x += 1
+            elif direction < 0 and x > 0:
+                room_direction = "w"
+                x -= 1
+            else:
+                room_direction = "n"
+                y += 1
+                direction *= -1
+            room = Room(title="", description="")
+            room.save()
+            if previous_room is not None:
+                previous_room.connectRooms(room, room_direction)
+            previous_room = room
+            room_count += 1
+
 
 w = World()
 num_rooms = 44
