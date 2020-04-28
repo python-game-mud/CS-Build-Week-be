@@ -5,30 +5,31 @@ from adventure.models import Player, Room
 Room.objects.all().delete()
 
 r_outside = Room(title="Outside Cave Entrance",
-               description="North of you, the cave mount beckons")
+               description="North of you, the cave mount beckons", coordsX=5, coordsY=5)
 
 r_foyer = Room(title="Foyer", description="""Dim light filters in from the south. Dusty
-passages run north and east.""")
+passages run north and east.""", coordsX=5, coordsY=4)
 
 r_overlook = Room(title="Grand Overlook", description="""A steep cliff appears before you, falling
 into the darkness. Ahead to the north, a light flickers in
-the distance, but there is no way across the chasm.""")
+the distance, but there is no way across the chasm.""", coordsX=5, coordsY=3)
 
 r_narrow = Room(title="Narrow Passage", description="""The narrow passage bends here from west
-to north. The smell of gold permeates the air.""")
+to north. The smell of gold permeates the air.""", coordsX=6, coordsY=4)
 
 r_treasure = Room(title="Treasure Chamber", description="""You've found the long-lost treasure
 chamber! Sadly, it has already been completely emptied by
-earlier adventurers. The only exit is to the south.""")
+earlier adventurers. The only exit is to the south.""", coordsX=6, coordsY=3)
 
 r_outside.save()
 r_foyer.save()
 r_overlook.save()
 r_narrow.save()
 r_treasure.save()
+# my room to the east -1 or west + 1, coordsY=my room to the north+1 or south -1)
 
 # Link rooms together
-r_outside.connectRooms(r_foyer, "n")
+r_outside.connectRooms(r_foyer, "n") 
 r_foyer.connectRooms(r_outside, "s")
 
 r_foyer.connectRooms(r_overlook, "n")
@@ -40,8 +41,18 @@ r_narrow.connectRooms(r_foyer, "w")
 r_narrow.connectRooms(r_treasure, "n")
 r_treasure.connectRooms(r_narrow, "s")
 
+'''
+curr room = outside
+
+if curr room n_to:
+  curr room = curr room n_to
+  currroom.n_to coordsX = currroom.coordsX, 
+  currroom.n_to coordsY = currroom.coordsY - 1, 
+'''
+
 players=Player.objects.all()
 for p in players:
   p.currentRoom=r_outside.id
   p.save()
+
 

@@ -85,13 +85,11 @@ class RoomsSerializer(serializers.HyperlinkedModelSerializer):
 
 class RoomViewSet(viewsets.ModelViewSet):
     serializer_class = RoomsSerializer
-    queryset = Room.objects.none()
+    queryset = Room.objects.all()
 
-    def get_queryset(self):
-        logged_in_user = self.request.user
-        if logged_in_user.is_anonymous:
-            return Room.objects.none()
-        else:
-            return Room.objects.all()
-
-            # Room.objects.filter(user=logged_in_user)
+    # def get_queryset(self):
+    #     logged_in_user = self.request.user
+    #     if logged_in_user.is_anonymous:
+    #         return Room.objects.none() # []
+    #     else:
+    #         return Room.objects.all()

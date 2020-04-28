@@ -1,5 +1,5 @@
 import sys
-
+from models import *
 
 class Map:
     def __init__(self, height, width, player_x, player_y, paths):
@@ -56,19 +56,37 @@ class Map:
 
 
 # position (x, y), connect to (x +/- 1, y) or (x, y +/- 1)
-paths = [((0, 0), (1, 0)),
-         ((0, 0), (0, 1)),
-         ((1, 0), (1, 1)),
-         ((1, 1), (2, 1)),
-         ((1, 1), (1, 2)),
-         ((0, 2), (1, 2)),
-         ((1, 2), (2, 2)),
-         ((0, 2), (0, 3)),
-         ((0, 3), (1, 3)),
-         ((1, 3), (2, 3)),
-         ((2, 3), (3, 3))]
+'''
+room = (x, y)
+room_connection = ((), ())
+for each room where room = room_connection[0]
+room_connection[1][0] = random number between x-- and x++ inclusive
+room_connection[1][1] = random number between y-- and y++ inclusive
 
-m = Map(25, 25, 15, 15, paths)
+Option 2
+for each room in rooms:
+coords = ((roomA), (roomB))
+roomA = current room
+if currroom has n_to:
+    roomB = room.n_to
+if currroom has s_to:
+    roomB = room.s_to
+if currroom has e_to:
+    roomB = room.e_to
+if currroom has w_to:
+    roomB = room.w_to
+else 
+# need a condition where the largest x coord is not larger than width
+# need a condition where the largest y coord is not larger than height
+return coords
+'''
+
+# paths = [((0, 0), (1, 0)),
+#          ((0, 0), (0, 1)),
+#          ((1, 3), (2, 3)),
+#          ((2, 3), (3, 3)),]
+
+m = Map(10, 10, 5, 5, paths)
 
 while True:
     m.print_map()
