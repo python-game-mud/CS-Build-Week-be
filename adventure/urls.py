@@ -12,6 +12,6 @@ urlpatterns = [
     url('init', api.initialize),
     url('move', api.move),
     url('say', api.say),
-    # url("rooms", api.all_rooms),
+    url("rooms/<uuid:id>/", api.get_room_by_id),
     path('', include(router.urls)),
 ]

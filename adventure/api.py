@@ -75,13 +75,18 @@ def say(request):
 #     rooms = serializers.serialize("json", Room.objects.all())
 #     return JsonResponse({'rooms': rooms},safe=True, status=200)
 
-
+@csrf_exempt
+@api_view(["GET"])
+def get_room_by_id(id):
+    return Room.title + Room.description + Room.n_to + Room.s_to + Room.w_to + Room.e_to
 
 class RoomsSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Room
-        fields = ("title", "description", "n_to", "s_to", "e_to", "w_to")
+        fields = ("title", "description", "n_to", "s_to", "e_to", "w_to", "id")
+
+
 
 class RoomViewSet(viewsets.ModelViewSet):
     serializer_class = RoomsSerializer
@@ -93,3 +98,4 @@ class RoomViewSet(viewsets.ModelViewSet):
     #         return Room.objects.none() # []
     #     else:
     #         return Room.objects.all()
+
