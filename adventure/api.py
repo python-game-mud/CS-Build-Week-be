@@ -29,7 +29,6 @@ def initialize(request):
 # @csrf_exempt
 @api_view(["POST"])
 def move(request):
-    print("REQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ",request)
     dirs={"n": "north", "s": "south", "e": "east", "w": "west"}
     reverse_dirs = {"n": "south", "s": "north", "e": "west", "w": "east"}
     player = request.user.player
@@ -70,10 +69,10 @@ def say(request):
     # IMPLEMENT
     return JsonResponse({'error':"Not yet implemented"}, safe=True, status=500)
 
-# @api_view(["GET"])
-# def all_rooms(req):
-#     rooms = serializers.serialize("json", Room.objects.all())
-#     return JsonResponse({'rooms': rooms},safe=True, status=200)
+@api_view(["GET"])
+def all_rooms(req):
+    rooms = serializers.serialize("json", Room.objects.all())
+    return JsonResponse({'rooms': rooms},safe=True, status=200)
 
 @csrf_exempt
 @api_view(["GET"])
@@ -84,7 +83,7 @@ class RoomsSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Room
-        fields = ("title", "description", "n_to", "s_to", "e_to", "w_to", "id")
+        fields = ("id","title", "description", "n_to", "s_to", "e_to", "w_to")
 
 
 
