@@ -134,7 +134,7 @@ class World:
                 y += 1
                 direction *= -1
             # Create a room in the given direction
-            room = Room(room_count, f"Room: {room_count}", f"whatever", x, y)
+            room = Room(room_count, f"Room: {room_count}", f"whatever")
             # Note that in Django, you'll need to save the room after you create it
             # Save the room in the World grid
             self.grid[y][x] = room
@@ -241,7 +241,7 @@ w.generate_rooms(width, height, num_rooms)
 class RoomsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Room
-        fields = ("id","title", "description", "n_to", "s_to", "e_to", "w_to", "x", "y")
+        fields = ("id","title", "description", "n_to", "s_to", "e_to", "w_to")
 
 
 
