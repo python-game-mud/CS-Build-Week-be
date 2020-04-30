@@ -1,79 +1,31 @@
 
 from django.db import models
+# from adventure.models import Room
 
 
 
-class Room():
-    def __init__(self, id, name, description, x, y):
-        self.id = id
-        self.name = name
-        self.description = description
-        self.n_to = None
-        self.s_to = None
-        self.e_to = None
-        self.w_to = None
-        self.x = x
-        self.y = y
-    def __repr__(self):
-        # if self.e_to is not None:
-        #     return f"({self.x}, {self.y}) -> ({self.e_to.x}, {self.e_to.y})"
-        return f"({self.x}, {self.y})"
+class Room(models.Model):
+    title = models.CharField(max_length=50, default="DEFAULT TITLE")
+    description = models.CharField(max_length=500, default="DEFAULT DESCRIPTION")
+    n_to = models.IntegerField(default=0)
+    s_to = models.IntegerField(default=0)
+    e_to = models.IntegerField(default=0)
+    w_to = models.IntegerField(default=0)
+    # adding coordinates to rooms
+    x = models.IntegerField(default=0)
+    y = models.IntegerField(default=0)
 
     def connect_rooms(self, connecting_room, direction):
         reverse_dirs = {"n": "s", "s": "n", "e": "w", "w": "e"}
         reverse_dir = reverse_dirs[direction]
-        setattr(self, f"{direction}_to", connecting_room)
-        setattr(connecting_room, f"{reverse_dir}_to", self)
-
-    def get_room_in_direction(self, direction):
-        return getattr(self, f"{direction}_to")
-
-    def get_coordinates(self):
-        return [self.x, self.y]
+        setattr(self, f"{direction}_to", connecting_room.id)
+        setattr(connecting_room, f"{reverse_dir}_to", self.id)
+    def playerNames(self, currentPlayerID):
+        return [p.user.username for p in Player.objects.filter(currentRoom=self.id) if p.id != int(currentPlayerID)]
+    def playerUUIDs(self, currentPlayerID):
+        return [p.uuid for p in Player.objects.filter(currentRoom=self.id) if p.id != int(currentPlayerID)]
 
 
-# class Room(models.Model):
-#     title = models.CharField(max_length=50, default="DEFAULT TITLE")
-#     description = models.CharField(max_length=500, default="DEFAULT DESCRIPTION")
-#     n_to = models.IntegerField(default=0)
-#     s_to = models.IntegerField(default=0)
-#     e_to = models.IntegerField(default=0)
-#     w_to = models.IntegerField(default=0)
-#     # adding coordinates to rooms
-#     x = models.IntegerField(default=0)
-#     y = models.IntegerField(default=0)
-
-#     def connectRooms(self, destinationRoom, direction):
-#         destinationRoomID = destinationRoom.id
-#         try:
-#             destinationRoom = Room.objects.get(id=destinationRoomID)
-#         except Room.DoesNotExist:
-#             print("That room does not exist")
-#         else:
-#             if direction == "n":
-#                 self.n_to = destinationRoomID
-#             elif direction == "s":
-#                 self.s_to = destinationRoomID
-#             elif direction == "e":
-#                 self.e_to = destinationRoomID
-#             elif direction == "w":
-#                 self.w_to = destinationRoomID
-#             else:
-#                 print("Invalid direction")
-#                 return
-#             self.save()
-#     def playerNames(self, currentPlayerID):
-#         return [p.user.username for p in Player.objects.filter(currentRoom=self.id) if p.id != int(currentPlayerID)]
-#     def playerUUIDs(self, currentPlayerID):
-#         return [p.uuid for p in Player.objects.filter(currentRoom=self.id) if p.id != int(currentPlayerID)]
-
-# Sample Python code that can be used to generate rooms in
-# a zig-zag pattern.
-
-#
-# You can modify generate_rooms() to create your own
-# procedural generation algorithm and use print_rooms()
-# to see the world.
 
 class World:
     def __init__(self):
@@ -119,6 +71,7 @@ class World:
             if previous_room is not None:
                 previous_room.connect_rooms(room, room_direction)
                 room.description = f"This room has paths: {room.n_to} {room.s_to} {room.e_to} {room.w_to}"
+               
             # Update iteration variables
             previous_room = room
             room_count += 1
@@ -146,7 +99,7 @@ class World:
                 previous_room.connect_rooms(room, room_direction)
             # Update iteration variables
             previous_room = self.grid[y][x]
-            # previous_room.save()
+            previous_room.save()
             room_count -= 1
 
           
