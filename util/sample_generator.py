@@ -1,44 +1,41 @@
-class Room:
-    def __init__(self, id, name, description, x, y):
-        self.id = id
-        self.name = name
-        self.description = description
-        self.n_to = None
-        self.s_to = None
-        self.e_to = None
-        self.w_to = None
-        self.x = x
-        self.y = y
-    def __repr__(self):
-        if self.e_to is not None:
-            return f"({self.x}, {self.y}) -> ({self.e_to.x}, {self.e_to.y})"
-        return f"({self.x}, {self.y})"
 
-    def connect_rooms(self, connecting_room, direction):
-        reverse_dirs = {"n": "s", "s": "n", "e": "w", "w": "e"}
-        reverse_dir = reverse_dirs[direction]
-        setattr(self, f"{direction}_to", connecting_room)
-        setattr(connecting_room, f"{reverse_dir}_to", self)
+from django.db import models
+import sys
+sys.path.insert(1, 'adventure')
+import models
 
-    def get_room_in_direction(self, direction):
-        return getattr(self, f"{direction}_to")
+# from adventure.models import Room
 
-    def get_coordinates(self):
-        return [self.x, self.y]
 
-# Sample Python code that can be used to generate rooms in
-# a zig-zag pattern.
-#
-# You can modify generate_rooms() to create your own
-# procedural generation algorithm and use print_rooms()
-# to see the world.
+
+# class Room(models.Model):
+#     title = models.CharField(max_length=50, default="DEFAULT TITLE")
+#     description = models.CharField(max_length=500, default="DEFAULT DESCRIPTION")
+#     n_to = models.IntegerField(default=0)
+#     s_to = models.IntegerField(default=0)
+#     e_to = models.IntegerField(default=0)
+#     w_to = models.IntegerField(default=0)
+#     # adding coordinates to rooms
+#     x = models.IntegerField(default=0)
+#     y = models.IntegerField(default=0)
+
+#     def connect_rooms(self, connecting_room, direction):
+#         reverse_dirs = {"n": "s", "s": "n", "e": "w", "w": "e"}
+#         reverse_dir = reverse_dirs[direction]
+#         setattr(self, f"{direction}_to", connecting_room.id)
+#         setattr(connecting_room, f"{reverse_dir}_to", self.id)
+#     def playerNames(self, currentPlayerID):
+#         return [p.user.username for p in Player.objects.filter(currentRoom=self.id) if p.id != int(currentPlayerID)]
+#     def playerUUIDs(self, currentPlayerID):
+#         return [p.uuid for p in Player.objects.filter(currentRoom=self.id) if p.id != int(currentPlayerID)]
+
+
 
 class World:
     def __init__(self):
         self.grid = None
         self.width = 0
         self.height = 0
-        self.counter = 0
 
     def generate_rooms(self, size_x, size_y, num_rooms):
         # Initialize the grid
@@ -56,90 +53,62 @@ class World:
         # While there are rooms to be created...
         previous_room = None
         # room_direction = []
-        # while room_count < num_rooms:
-        #     # Calculate the direction of the room to be created
-        #     if direction > 0 and x < size_x - 1:
-        #         room_direction = "e"
-        #         x += 1
-        #         # print(x)
-        #         # print("y values", y)
-        #         # if x % 3 == 0:
-        #         #     print(x)
-        #         #     room_direction = "n"
-        #             # room_direction = "e"
-        #             # y += 1
-        #             # direction *= -1
-        #     elif direction < 0 and x > 0:
-        #         room_direction = "w"
-        #         x -= 1
-        #         # if x % 3 == 0:
-        #         #     room_direction = "s"
-        #     else:
-        #         # If we hit a wall, turn north and reverse direction
-        #         room_direction = "n"
-        #         y += 1
-        #         direction *= -1
-        while self.counter < self.width * self.height:
-
-        while self.counter > self.width * self.height:
-           
+        while room_count < num_rooms:
+            # Calculate the direction of the room to be created
+            if direction > 0 and x < size_x - 1:
+                room_direction = "e"
+                x += 1
+            elif direction < 0 and x > 0:
+                room_direction = "w"
+                x -= 1
+            else:
+                # If we hit a wall, turn north and reverse direction
+                room_direction = "n"
+                y += 1
+                direction *= -1
             # Create a room in the given direction
-            room = Room(room_count, f"Room: {room_count}", f"This room has path: {room_direction}.", x, y)
-
+            room = Room(room_count, f"Room: {room_count}", f"whatever", x, y)
             # Note that in Django, you'll need to save the room after you create it
             # Save the room in the World grid
             self.grid[y][x] = room
             # Connect the new room to the previous room
             if previous_room is not None:
                 previous_room.connect_rooms(room, room_direction)
-            # if previous_room is not None:
-            #     ne_room.connect_rooms(room, room_direction)
+                room.description = f"This room has paths: {room.n_to} {room.s_to} {room.e_to} {room.w_to}"
+               
             # Update iteration variables
             previous_room = room
-            self.counter += 1
             room_count += 1
+        direction = 1
+        while room_count > 0:
+            # Calculate the direction of the room to be created
+            if direction > 0 and x < size_x - 1:
+                room_direction = "e"
+                x += 1
+            elif direction < 0 and x > 0:
+                room_direction = "w"
+                x -= 1
+            else:
+                # If we hit a wall, turn north and reverse direction
+                room_direction = "s"
+                y -= 1
+                direction *= -1
+            # Create a room in the given direction
+            # room = Room(room_count, "A Generic Room", "This room has paths.", x, y)
+            # Note that in Django, you'll need to save the room after you create it
+            # Save the room in the World grid
+            # self.grid[y][x] = room
+            # Connect the new room to the previous room
+            if previous_room is not None:
+                previous_room.connect_rooms(room, room_direction)
+            # Update iteration variables
+            previous_room = self.grid[y][x]
+            previous_room.save()
+            room_count -= 1
 
-            if room.id == 0:
-                print("0 n", room.n_to)
-                print("0 e", room.e_to)
-                print("0 w", room.w_to)
-                print("0 s", room.s_to)
-                print("---------------")
-            if room.id == 11:
-                print("11 n", room.n_to)
-                print("11 e", room.e_to)
-                print("11 w", room.w_to)
-                print("11 s", room.s_to)
-                print("---------------")
-            if room.id == 28:
-                print("28 n", room.n_to)
-                print("28 e", room.e_to)
-                print("28 w", room.w_to)
-                print("28 s", room.s_to)
-                print("---------------")
-            if room.id == 29:
-                print("29 n", room.n_to)
-                print("29 e", room.e_to)
-                print("29 w", room.w_to)
-                print("29 s", room.s_to)
-                print("---------------")
-            if room.id == 30:
-                print('30 n', room.n_to)
-                print("30 e", room.e_to)
-                print("30 w", room.w_to)
-                print("30 s", room.s_to)
-                print("---------------")
-            if room.id == 31:
-                print("31 n",room.n_to)
-                print("31 e",room.e_to)
-                print("31 w",room.w_to)
-                print("31 s",room.s_to)
-                print("---------------")
-            if room.id == 224:
-                print("224 n",room.n_to)
-                print("224 e",room.e_to)
-                print("224 w",room.w_to)
-                print("224 s",room.s_to) 
+          
+
+
     def print_rooms(self):
         # Add top border
         str = "# " * ((3 + self.width * 5) // 2) + "\n"
@@ -194,6 +163,4 @@ num_rooms = height * width
 w.generate_rooms(width, height, num_rooms)
 w.print_rooms()
 
-
 print(f"\n\nWorld\n  height: {height}\n  width: {width},\n  num_rooms: {num_rooms}\n")
-print(w.counter)
