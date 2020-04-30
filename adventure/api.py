@@ -228,33 +228,23 @@ class World:
 # print(f"\n\nWorld\n  height: {height}\n  width: {width},\n  num_rooms: {num_rooms}\n")
 
 
-if len(Room.objects.all()) >= 99:
-    class RoomsSerializer(serializers.HyperlinkedModelSerializer):
-        class Meta:
-            model = Room
-            fields = ("id","title", "description", "n_to", "s_to", "e_to", "w_to")
+
+# delete existing rooms
+Room.objects.all().delete()
+# genereate the rooms
+w = World()
+width = 10
+height = 10
+num_rooms = height * width
+w.generate_rooms(width, height, num_rooms)
+# serve the rooms
+class RoomsSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Room
+        fields = ("id","title", "description", "n_to", "s_to", "e_to", "w_to", "x", "y")
 
 
 
-    class RoomViewSet(viewsets.ModelViewSet):
-        serializer_class = RoomsSerializer
-        queryset = Room.objects.all()
-
-else:
-    # genereate the rooms
-    w = World()
-    width = 10
-    height = 10
-    num_rooms = height * width
-    w.generate_rooms(width, height, num_rooms)
-    # serve the rooms
-    class RoomsSerializer(serializers.HyperlinkedModelSerializer):
-        class Meta:
-            model = Room
-            fields = ("id","title", "description", "n_to", "s_to", "e_to", "w_to")
-
-
-
-    class RoomViewSet(viewsets.ModelViewSet):
-        serializer_class = RoomsSerializer
-        queryset = Room.objects.all()
+class RoomViewSet(viewsets.ModelViewSet):
+    serializer_class = RoomsSerializer
+    queryset = Room.objects.all()
